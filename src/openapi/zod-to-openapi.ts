@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
-import mergeDeep from 'merge-deep'
+const mergician = require('mergician')
 import { z } from '../z'
 
 interface ExtendedSchemaObject extends SchemaObject {
@@ -225,10 +225,10 @@ export function zodToOpenAPI(
 
   if (is(zodType, z.ZodIntersection)) {
     const { left, right } = zodType._def
-    const merged = mergeDeep(
-      zodToOpenAPI(left, visited),
-      zodToOpenAPI(right, visited)
-    )
+    const merged = mergician({
+      appendArrays: true,
+      dedupArrays: true,
+    })(zodToOpenAPI(left, visited), zodToOpenAPI(right, visited))
     Object.assign(object, merged)
   }
 
